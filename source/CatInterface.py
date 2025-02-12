@@ -1,52 +1,32 @@
 import serial
+import time
 
-def write_to_com_port(port, baud_rate, data):
-    """
-    Write data to the specified COM port.
 
-    Parameters:
-    port (str): The COM port to write to (e.g., 'COM1', 'COM2').
-    baud_rate (int): The baud rate for the serial connection.
-    data (str): The data to send to the COM port.
-
-    Returns:
-    None
-    """
+def writeReadCom(port, baud_rate, data):
     try:
         ser = serial.Serial(port, baud_rate, timeout=1)
+
         ser.write(data.encode())
-        ser.close()
-        print(f"Data '{data}' written to {port} successfully.")
-    except Exception as e:
-        print(f"Failed to write to {port}: {e}")
+        print(f"Sent: {data}")
+        time.sleep(0.2) # Allow time for data to be received
 
-def read_from_com_port(port, baud_rate):
-    """
-    Read data from the specified COM port.
+        if ser.in_waiting > 0:
+            received_data = ser.readline().decode().strip()
+            print(f"Received: {received_data}")
+            return received_data
+        else:
+            print("No data received within the timeout period.")
 
-    Parameters:
-    port (str): The COM port to read from (e.g., 'COM1', 'COM2').
-    baud_rate (int): The baud rate for the serial connection.
+    except serial.SerialException as e:
+        print(f"Error: {e}")
 
-    Returns:
-    str: The data read from the COM port.
-    """
-    try:
-        ser = serial.Serial(port, baud_rate, timeout=1)
-        data = ser.readline().decode().strip()
-        ser.close()
-        print(f"Data read from {port}: {data}")
-        return data
-    except Exception as e:
-        print(f"Failed to read from {port}: {e}")
-        return None
+    finally:  # Use finally to ensure the port is closed even if errors occur
+        if 'ser' in locals() and ser.is_open:
+            ser.close()
+            print("Port closed.")
 
-# Example usage
-port = 'COM1'  # Replace with your COM port
-baud_rate = 9600
+    return "000000"    
 
-# Write data to COM port
-write_to_com_port(port, baud_rate, "Hello, COM port!")
 
-# Read data from COM port
-data_received = read_from_com_port(port, baud_rate)
+    
+    
