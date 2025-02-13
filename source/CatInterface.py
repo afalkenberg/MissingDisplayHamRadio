@@ -11,7 +11,7 @@ class CatInterface:
 
 
     def writeReadCom(self, data):
-        return "123123"
+        #return "123123"
         try:
             ser = serial.Serial(self.port, self.baudRate, timeout=1)
             ser.write(data.encode())

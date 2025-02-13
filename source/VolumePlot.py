@@ -10,9 +10,19 @@ import CatInterface
 class VolumePlot:
 
     def __init__(self):
-        self.categories = ['A', 'B', 'C', 'D', 'E']
+        self.categories = ['0-9', '10-19', '20-29', '30-39', '40-49']
         self.values = np.array([4, 7, 1, 8, 5])
         self.catInterface = CatInterface.CatInterface('COM4', 9600)
+
+    def calcValues(self, vol):
+        v = 50*vol/256
+        self.values[4] = min(10, v-40)
+        self.values[3] = min(10, v-30)
+        self.values[2] = min(10, v-20)
+        self.values[1] = min(10, v-10)
+        self.values[0] = min(10, v)
+        
+
 
     def readVolume(self):
         dataReceived = self.catInterface.writeReadCom("AG0;")
@@ -34,10 +44,10 @@ class VolumePlot:
     def update_plot(self):
         self.ax.clear()
         self.ax.bar(self.categories, self.values, color='blue')
-        self.ax.set_ylim(0, 125)  # Adjust y-axis limits if necessary
-        self.ax.set_title('Interactive Bar Plot')
-        self.ax.set_xlabel('Categories')
-        self.ax.set_ylabel('Values')
+        self.ax.set_ylim(0, 11)  # Adjust y-axis limits if necessary
+        self.ax.set_title('Volume')
+        self.ax.set_xlabel('')
+        self.ax.set_ylabel('')
         self.canvas.draw()
 
 # Function to handle button clicks
@@ -45,7 +55,8 @@ class VolumePlot:
         vol = self.readVolume()
         print(vol)
         vol += 1
-        self.values[0] += 1
+        # self.values[0] = vol
+        self.calcValues(vol)
         self.writeVolume(vol)
         self.update_plot()
 
@@ -53,6 +64,8 @@ class VolumePlot:
         vol = self.readVolume()
         vol = vol - 1
         self.writeVolume(vol)
+        #self.values[0] = vol
+        self.calcValues(vol)
         self.update_plot()
 
 
