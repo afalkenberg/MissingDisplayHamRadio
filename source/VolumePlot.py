@@ -52,7 +52,6 @@ class VolumePlot:
         vol = self.readVolume()
         print(vol)
         vol += 1
-        # self.values[0] = vol
         self.calcValues(vol)
         self.writeVolume(vol)
         self.update_plot()
@@ -61,7 +60,6 @@ class VolumePlot:
         vol = self.readVolume()
         vol = vol - 1
         self.writeVolume(vol)
-        #self.values[0] = vol
         self.calcValues(vol)
         self.update_plot()
 
