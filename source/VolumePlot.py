@@ -9,10 +9,10 @@ import CatInterface
 
 class VolumePlot:
 
-    def __init__(self):
+    def __init__(self, dbg):
         self.categories = ['0-9', '10-19', '20-29', '30-39', '40-49']
         self.values = np.array([4, 7, 1, 8, 5])
-        self.catInterface = CatInterface.CatInterface('COM4', 9600)
+        self.catInterface = CatInterface.CatInterface('COM4', 9600, dbg)
 
     def calcValues(self, vol):
         v = 50*vol/256
@@ -22,13 +22,10 @@ class VolumePlot:
         self.values[1] = min(10, v-10)
         self.values[0] = min(10, v)
         
-
-
     def readVolume(self):
         dataReceived = self.catInterface.writeReadCom("AG0;")
         print(dataReceived)
         return int(dataReceived[3:6])
-
 
     def writeVolume(self, vol):
         if len(str(vol)) == 1:
@@ -68,21 +65,23 @@ class VolumePlot:
         self.calcValues(vol)
         self.update_plot()
 
+    def on_closing(self):
+        self.root.quit()
 
     def createMainWindow(self):
-# Create the main window
-        root = tk.Tk()
-        root.title("Interactive Bar Plot")
+    # Create the main window
+        self.root = tk.Tk()
+        self.root.title("Interactive Bar Plot")
 
-# Create the figure and axis
+    # Create the figure and axis
         self.fig, self.ax = plt.subplots()
 
-# Create the canvas for the figure
-        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
+    # Create the canvas for the figure
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack()
 
-# Create buttons for each category
-        frame = tk.Frame(root)
+    # Create buttons for each category
+        frame = tk.Frame(self.root)
         frame.pack(side=tk.LEFT, padx=5)
 
         label = tk.Label(frame, text=self.categories[0])
@@ -94,14 +93,11 @@ class VolumePlot:
         btn_decrease = tk.Button(frame, text="-", command=self.decrease_value)
         btn_decrease.pack(side=tk.LEFT)
 
-# Initial plot update
+    # Initial plot update
         self.update_plot()
 
-# Run the Tkinter event loop
-        root.mainloop()
-
-
-VP = VolumePlot()
-VP.createMainWindow()
+    # Run the Tkinter event loop
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.root.mainloop()
 
 

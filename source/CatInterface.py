@@ -4,14 +4,16 @@ import time
 
 class CatInterface:
 
-    def __init__(self, port, rate):
+    def __init__(self, port, rate, dbg):
         self.port = port
         self.baudRate = rate
         self.sleepRate = 0.1
-
+        self.debug = dbg
 
     def writeReadCom(self, data):
-        #return "123123"
+        if(self.debug):
+            return "123123"
+
         try:
             ser = serial.Serial(self.port, self.baudRate, timeout=1)
             ser.write(data.encode())
