@@ -99,9 +99,9 @@ class ReceiverAudioFilter:
         if self.debug == True:
             self.lcutVal = max(self.lcutVal - 1, self.minlcutVal) 
         else:
-            low = self.readData('lowFrequency')
-            self.lcutFreq = low - 100
-            self.writeData('lowFrequency',low)
+            self.lcutVal = self.readData('lowFrequency')
+            self.lcutVal = max(self.lcutVal - 1, self.minlcutVal)
+            self.writeData('lowFrequency', self.lcutVal)
         self.update_plot()
 
 
