@@ -5,7 +5,7 @@ try:
     ser = serial.Serial('COM4', 9600, timeout=1)  # Add timeout
     print("Port opened!")
 
-    data_to_send = 'AG0040;'
+    data_to_send = 'EX1000;'
     ser.write(data_to_send.encode())
     print(f"Sent: {data_to_send}")
     time.sleep(1.2) # Allow time for data to be received

@@ -47,7 +47,9 @@ class ReceiverAudioFilter:
         if what == 'lowFrequency':
             if data == 0:
                 vString = "EX09900"+";"
-            else:
+            elif data < 10:
+                vString = "EX0990"+str(data)+";"
+            else:    
                 vString = "EX099"+str(data)+";"
             self.catInterface.writeReadCom(vString)
 
@@ -59,10 +61,15 @@ class ReceiverAudioFilter:
             self.catInterface.writeReadCom(vString)
 
         elif what == 'lowSlope':
+            print("lSlope")
+            print(data)
             vString = "EX100"+str(data)+";"
+            print(vString)
+            self.catInterface.writeReadCom(vString)
 
         elif what == 'highSlope':
             vString = "EX102"+str(data)+";"
+            self.catInterface.writeReadCom(vString)
 
         return 42
 
@@ -130,7 +137,7 @@ class ReceiverAudioFilter:
         else:
             self.hcutVal = self.readData('highFrequency')
             self.hcutVal = min(self.hcutVal + 1, self.maxhcutVal)
-            self.writeData('highFrequency', high)
+            self.writeData('highFrequency', self.hcutVal)
         self.update_plot()
 
     def highFrequencyDecrease(self):
