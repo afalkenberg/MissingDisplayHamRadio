@@ -6,7 +6,7 @@ import CatInterface
 
 class ReceiverAudioFilter:
 
-    def __init__(self, dbg):
+    def __init__(self, md, dbg):
         self.catInterface = CatInterface.CatInterface('COM4', 9600, dbg)
         self.lcutFreqRange  = [i for i in range(0,1001, 50)]
         self.minlcutVal = 0
@@ -18,25 +18,65 @@ class ReceiverAudioFilter:
         self.maxhcutVal = 67
         self.hcutVal = 0
 
-        
         self.slopeRange = [4, 12]  # 2 = 3db ;  4 = 6db ; 6 = 9dB ; 8 = 12dB ; 10 = 15dB ; 12 = 18db
         self.lSlopeVal = 0
         self.hSlopeVal = 0
-
         self.debug = dbg
-        
+        self.mode = md
+        self.initCommand()
+
+    def initCommand(self):
+        self.readCommandMap = {}
+        self.readCommandMap['ssb'] = {}
+        self.readCommandMap['am'] = {}
+        self.readCommandMap['fm'] = {}
+        self.readCommandMap['cw'] = {}
+        self.readCommandMap['data'] = {}
+        self.readCommandMap['rtty'] = {}
+    
+        self.readCommandMap['ssb']['lowFrequency'] = "EX099" 
+        self.readCommandMap['ssb']['highFrequency'] = "EX101" 
+        self.readCommandMap['ssb']['lowSlope'] = "EX100" 
+        self.readCommandMap['ssb']['highSlope'] = "EX102" 
+
+        self.readCommandMap['am']['lowFrequency'] = "EX048" 
+        self.readCommandMap['am']['highFrequency'] = "EX050" 
+        self.readCommandMap['am']['lowSlope'] = "EX049" 
+        self.readCommandMap['am']['highSlope'] = "EX051" 
+
+        self.readCommandMap['fm']['lowFrequency'] = "EX080" 
+        self.readCommandMap['fm']['highFrequency'] = "EX082" 
+        self.readCommandMap['fm']['lowSlope'] = "EX081" 
+        self.readCommandMap['fm']['highSlope'] = "EX083" 
+
+        self.readCommandMap['cw']['lowFrequency'] = "EX055" 
+        self.readCommandMap['cw']['highFrequency'] = "EX057" 
+        self.readCommandMap['cw']['lowSlope'] = "EX056" 
+        self.readCommandMap['cw']['highSlope'] = "EX058" 
+
+        self.readCommandMap['data']['lowFrequency'] = "EX071" 
+        self.readCommandMap['data']['highFrequency'] = "EX073" 
+        self.readCommandMap['data']['lowSlope'] = "EX072" 
+        self.readCommandMap['data']['highSlope'] = "EX074" 
+
+        self.readCommandMap['rtty']['lowFrequency'] = "EX089" 
+        self.readCommandMap['rtty']['highFrequency'] = "EX091" 
+        self.readCommandMap['rtty']['lowSlope'] = "EX090" 
+        self.readCommandMap['rtty']['highSlope'] = "EX092" 
+
+
     def readData(self, what):
         if what == 'lowFrequency':
-            dataReceived = self.catInterface.writeReadCom("EX099;")
+            dataReceived = self.catInterface.writeReadCom(self.readCommandMap[self.mode][what]+";")
             return int(dataReceived[5:7])
         elif what == 'highFrequency':
-            dataReceived = self.catInterface.writeReadCom("EX101;")
+            dataReceived = self.catInterface.writeReadCom(self.readCommandMap[self.mode][what]+";")
             return int(dataReceived[5:7])
         elif what == 'lowSlope':
-            dataReceived = self.catInterface.writeReadCom("EX100;")
+            dataReceived = self.catInterface.writeReadCom(self.readCommandMap[self.mode][what]+";")
             return int(dataReceived[5:6])
         elif what == 'highSlope':
-            dataReceived = self.catInterface.writeReadCom("EX102;")
+            dataReceived = self.catInterface.writeReadCom(self.readCommandMap[self.mode][what]+";")
             return int(dataReceived[5:6])
 
 
@@ -46,29 +86,26 @@ class ReceiverAudioFilter:
     def writeData(self, what, data):
         if what == 'lowFrequency':
             if data == 0:
-                vString = "EX09900"+";"
+                vString = self.readCommandMap[self.mode][what] + "00;"
             elif data < 10:
-                vString = "EX0990"+str(data)+";"
+                vString = self.readCommandMap[self.mode][what]+"0"+str(data)+";"
             else:    
-                vString = "EX099"+str(data)+";"
+                vString = self.readCommandMap[self.mode][what]+str(data)+";"
             self.catInterface.writeReadCom(vString)
 
         elif what == 'highFrequency':
             if data < 10:
-                vString = "EX1010"+str(data)+";"
+                vString = self.readCommandMap[self.mode][what]+"0"+str(data)+";"
             else:
-                vString = "EX101"+str(data)+";"
+                vString = self.readCommandMap[self.mode][what]+str(data)+";"
             self.catInterface.writeReadCom(vString)
 
         elif what == 'lowSlope':
-            print("lSlope")
-            print(data)
-            vString = "EX100"+str(data)+";"
-            print(vString)
+            vString = self.readCommandMap[self.mode][what]+str(data)+";"
             self.catInterface.writeReadCom(vString)
 
         elif what == 'highSlope':
-            vString = "EX102"+str(data)+";"
+            vString = self.readCommandMap[self.mode][what]+str(data)+";"
             self.catInterface.writeReadCom(vString)
 
         return 42
@@ -222,10 +259,6 @@ class ReceiverAudioFilter:
         buttonRightSlopeIncrease.grid(row = 1, column = 6)  # (side=tk.LEFT)
         buttonRightSlopeDecrease = tk.Button(frame, text="-", command=self.highSlopeDecrease)
         buttonRightSlopeDecrease.grid(row = 1, column = 7)  # (side=tk.LEFT)
-
-
-
-
 
 
 
