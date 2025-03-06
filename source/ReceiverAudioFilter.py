@@ -6,8 +6,9 @@ import CatInterface
 
 class ReceiverAudioFilter:
 
-    def __init__(self, md, dbg):
-        self.catInterface = CatInterface.CatInterface('COM4', 9600, dbg)
+    def __init__(self, md, com, bd, dbg):
+        # default COM4 bd 9600
+        self.catInterface = CatInterface.CatInterface(com, bd, dbg)
         self.lcutFreqRange  = [i for i in range(0,1001, 50)]
         self.minlcutVal = 0
         self.maxlcutVal = 20

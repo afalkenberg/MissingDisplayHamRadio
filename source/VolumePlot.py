@@ -9,10 +9,12 @@ import CatInterface
 
 class VolumePlot:
 
-    def __init__(self, dbg):
+    def __init__(self, com, bd, dbg):
+        self.debug = dbg
         self.categories = ['0-9', '10-19', '20-29', '30-39', '40-49']
-        self.values = np.array([4, 7, 1, 8, 5])
-        self.catInterface = CatInterface.CatInterface('COM4', 9600, dbg)
+        self.values = np.array([1, 3, 7, 3, 1])
+        self.catInterface = CatInterface.CatInterface(com, bd, self.debug)
+        self.mainVol = 0
 
     def calcValues(self, vol):
         v = 50*vol/256
@@ -49,30 +51,47 @@ class VolumePlot:
 
 # Function to handle button clicks
     def increase_value(self):
-        vol = self.readVolume()
-        print(vol)
-        vol += 1
-        self.calcValues(vol)
-        self.writeVolume(vol)
+        if self.debug == False: 
+            self.mainVol = self.readVolume()
+        print(self.mainVol)
+        self.mainVol += 1
+        self.calcValues(self.mainVol)
+        self.writeVolume(self.mainVol)
         self.update_plot()
 
     def decrease_value(self):
-        vol = self.readVolume()
-        vol = vol - 1
-        self.writeVolume(vol)
-        self.calcValues(vol)
+        if self.debug == False: 
+            self.mainVol = self.readVolume()
+        self.mainVol = self.mainVol - 1
+        self.writeVolume(self.mainVol)
+        self.calcValues(self.mainVol)
         self.update_plot()
+
+    def value_changed(self, event):
+        if self.debug == False: 
+            self.mainVol = self.readVolume()
+        self.mainVol = self.value_slider.get()
+        self.writeVolume(self.mainVol)
+        self.calcValues(self.mainVol)
+        self.update_plot()
+
 
     def on_closing(self):
         self.root.quit()
 
-    def createMainWindow(self):
+    def createMainWindow(self, x, y):
     # Create the main window
-        self.root = tk.Tk()
-        self.root.title("Interactive Bar Plot")
+        # self.root = tk.Tk()
+        # self.root.title("Interactive Bar Plot")
+
+        self.root = tk.Toplevel()  # was Tk()
+        self.root.title("Volume Plot")
+        self.root.geometry(f"+{x}+{y}")
+        self.root.geometry("420x380")
+
 
     # Create the figure and axis
-        self.fig, self.ax = plt.subplots()
+        self.fig, self.ax = plt.subplots(figsize=(4.2, 3.25), dpi=100)
 
     # Create the canvas for the figure
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
@@ -82,20 +101,24 @@ class VolumePlot:
         frame = tk.Frame(self.root)
         frame.pack(side=tk.LEFT, padx=5)
 
-        label = tk.Label(frame, text=self.categories[0])
-        label.pack(side=tk.TOP)
+        label = tk.Label(frame, text='0-49')
+        label.pack(side=tk.TOP, anchor=tk.CENTER)
 
-        btn_increase = tk.Button(frame, text="+", command=self.increase_value)
-        btn_increase.pack(side=tk.LEFT)
+        #btn_increase = tk.Button(frame, text="+", command=self.increase_value)
+        #btn_increase.pack(side=tk.LEFT)
 
-        btn_decrease = tk.Button(frame, text="-", command=self.decrease_value)
-        btn_decrease.pack(side=tk.LEFT)
+        #btn_decrease = tk.Button(frame, text="-", command=self.decrease_value)
+        #btn_decrease.pack(side=tk.LEFT)
+
+        self.value_slider = tk.Scale(frame, from_=0, to=256, orient='horizontal', command=self.value_changed, showvalue=False, length=300)
+        self.value_slider.pack(anchor=tk.CENTER, padx=100)
+
 
     # Initial plot update
         self.update_plot()
 
     # Run the Tkinter event loop
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-        self.root.mainloop()
+        # self.root.mainloop()
 
 
