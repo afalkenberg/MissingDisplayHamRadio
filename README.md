@@ -30,7 +30,26 @@ Setting a different COM port
 
 Regardless of the other settings you always have to set -dbg False
 
-So if you want to use it start it from the command line like 
+So if you want to use it start it from the command line like one of the commands below 
+
+MissingDisplayFT3000.exe -dbg False
+
+MissingDisplayFT3000.exe -dbg False -com COM5
+
+MissingDisplayFT3000.exe -dbg False -bd 38400
+
+MissingDisplayFT3000.exe -dbg False -bd 19200 -com COM4
+
+# Starting from Python
+Otherwise you can go into the source and start the main.py
+python main.py -dbg False -com COM5
+
+The executable is directly compiled from the python code. 
+
+
+
+
+
 
 
 
