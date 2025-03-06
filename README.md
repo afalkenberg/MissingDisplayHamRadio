@@ -7,11 +7,17 @@ menu which do not have a nice graphical representation.
 This first cut provides interfaces to the RX audio filters and the volume. 
 The volume was just experimental and is not needed because there is a volume knob on the FT3000.
 Anyway this gives access to the menues :
+
 048, 049, 051, 051
+
 055, 056, 057, 058
+
 071, 072, 073, 074
+
 080, 081, 082, 083
+
 089, 090, 091, 092
+
 099, 100, 101, 102
 
 You can just run the executable which is in the folder executable (dah). 
