@@ -78,12 +78,9 @@ class VolumePlot:
 
     def on_closing(self):
         self.root.quit()
+        self.root.destroy()
 
     def createMainWindow(self, x, y):
-    # Create the main window
-        # self.root = tk.Tk()
-        # self.root.title("Interactive Bar Plot")
-
         self.root = tk.Toplevel()  # was Tk()
         self.root.title("Volume Plot")
         self.root.geometry(f"+{x}+{y}")

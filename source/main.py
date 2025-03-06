@@ -16,9 +16,7 @@ for argInd in range(1,len(sys.argv), 2):
 		bd = int(sys.argv[argInd+1])
 	if(sys.argv[argInd] in ["-dbg","-DBG","-debug","-DEBUG"]):
 		dbg = sys.argv[argInd+1].lower() in ["true", "1", "yes", "y", "t"]
-
-print(com)
-print(dbg)
+	
 
 
 
