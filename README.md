@@ -19,13 +19,16 @@ The default settings nevertheless are COM4, 9600, and debug mode.
 So you only see nice figures because in debug mode it is not accessing your FT3000. 
 So you have to run it with the following parameters
 
-Setting debug to false
+Setting debug to false:
+
 -dbg False
 
 Setting another rate:
+
 -bd 38400
 
-Setting a different COM port
+Setting a different COM port:
+
 -com COM3
 
 Regardless of the other settings you always have to set -dbg False
@@ -41,7 +44,8 @@ MissingDisplayFT3000.exe -dbg False -bd 38400
 MissingDisplayFT3000.exe -dbg False -bd 19200 -com COM4
 
 # Starting from Python
-Otherwise you can go into the source and start the main.py
+Otherwise you can go into the source and start the main.py:
+
 python main.py -dbg False -com COM5
 
 The executable is directly compiled from the python code. 
